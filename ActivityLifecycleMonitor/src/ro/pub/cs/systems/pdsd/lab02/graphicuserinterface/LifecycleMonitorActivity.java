@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 
@@ -74,7 +75,14 @@ public class LifecycleMonitorActivity extends Activity {
         okButton.setOnClickListener(buttonClickListener);
         Button cancelButton = (Button)findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(buttonClickListener);
-        Log.d(Constants.TAG, "onCreate() method was invoked");
+        
+        String debugMessage = "";
+        if (savedInstanceState != null) {
+        	debugMessage = "onCreate() method was invoked before";
+        } else {
+        	debugMessage = "onCreate() methods was invoked";
+        }
+        Log.d(Constants.TAG, debugMessage);
     }    
 
     @Override
@@ -94,5 +102,77 @@ public class LifecycleMonitorActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    
+    @Override
+    protected void onStart() {
+      super.onStart();
+      Log.d(Constants.TAG, "onStart() method was invoked");
+    }
+   
+    @Override
+    protected void onResume() {
+      super.onResume();
+      Log.d(Constants.TAG, "onResume() method was invoked");
+    }
+   
+    @Override
+    protected void onPause() {
+      super.onPause();
+      Log.d(Constants.TAG, "onPause() method was invoked");
+    }
+   
+    @Override
+    protected void onStop() {
+      super.onStop();
+      Log.d(Constants.TAG, "onStop() method was invoked");
+    }
+   
+    @Override
+    protected void onDestroy() {
+      super.onDestroy();
+      Log.d(Constants.TAG, "onDestory() method was invoked");
+    }
+   
+    @Override
+    protected void onRestart() {
+      super.onRestart();
+      Log.d(Constants.TAG, "onRestart() method was invoked");
+    }
+   
+    // metode folosite pentru salvarea si restaurarea starii    
+   
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+      // apelarea metodei din activitatea parinte este recomandata, dar nu obligatorie
+      super.onSaveInstanceState(savedInstanceState);
+      CheckBox rememberMeCheckBox = (CheckBox)findViewById(R.id.remember_me_checkbox);
+      if (rememberMeCheckBox.isChecked()) {
+    	  EditText usernameEditText = (EditText)findViewById(R.id.username_edit_text);
+    	  savedInstanceState.putString(Constants.USERNAME_EDIT_TEXT, usernameEditText.getText().toString());
+    	  EditText passwordEditText = (EditText)findViewById(R.id.password_edit_text);
+    	  savedInstanceState.putString(Constants.PASSWORD_EDIT_TEXT, passwordEditText.getText().toString());
+    	  savedInstanceState.putBoolean(Constants.REMEMBER_ME_CHECKBOX, rememberMeCheckBox.isChecked());
+      }
+      Log.d(Constants.TAG, "onSaveInstanceState() method was invoked");
+    }
+   
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+      // apelarea metodei din activitatea parinte este recomandata, dar nu obligatorie
+      super.onRestoreInstanceState(savedInstanceState);
+      EditText usernameEditText= (EditText)findViewById(R.id.username_edit_text);
+      if (savedInstanceState.getString(Constants.USERNAME_EDIT_TEXT) != null) {
+          usernameEditText.setText(savedInstanceState.getString(Constants.USERNAME_EDIT_TEXT));
+      }
+      EditText passwordEditText = (EditText)findViewById(R.id.password_edit_text);
+      if (savedInstanceState.getString(Constants.PASSWORD_EDIT_TEXT) != null) {
+    	  passwordEditText.setText(savedInstanceState.getString(Constants.PASSWORD_EDIT_TEXT));
+      }
+      CheckBox rememberMeCheckBox = (CheckBox)findViewById(R.id.remember_me_checkbox);
+      if (savedInstanceState.getBoolean(Constants.REMEMBER_ME_CHECKBOX)) {
+    	  rememberMeCheckBox.setChecked(savedInstanceState.getBoolean(Constants.REMEMBER_ME_CHECKBOX));
+      }
+      Log.d(Constants.TAG, "onRestorInstanceState() method was invoked");
     }
 }
